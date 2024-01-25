@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:slicing_practice/api/news_list_services.dart';
+import 'package:slicing_practice/controller/news_list_provider.dart';
 import 'package:slicing_practice/models/news_model.dart';
+import 'package:provider/provider.dart';
+import 'package:slicing_practice/views/detail_news_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -13,12 +16,22 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Slicing Practice",
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-          useMaterial3: true),
-      home: HomeViewUI(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => NewsListProvider(),
+        )
+      ],
+      child: MaterialApp(
+        title: "Slicing Practice",
+        theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+            useMaterial3: true),
+        routes: {
+          DetailNewsPageView.routeName: (context) => const DetailNewsPageView(),
+        },
+        home: const HomeViewUI(),
+      ),
     );
   }
 }
@@ -28,6 +41,9 @@ class HomeViewUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final newsProvider = Provider.of<NewsListProvider>(context);
+    final selectedNews = newsProvider.newsList;
+
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.all(8),
@@ -40,13 +56,13 @@ class HomeViewUI extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Today's News"),
+                        const Text("Today's News"),
                         Text(DateFormat("EEE, dd MMMM yyyy")
                             .format(DateTime.now())),
                       ],
                     ),
                   ),
-                  Stack(
+                  const Stack(
                     alignment: Alignment.topRight,
                     children: [
                       CircleAvatar(
@@ -86,30 +102,42 @@ class HomeViewUI extends StatelessWidget {
                             scrollDirection: Axis.horizontal,
                             itemCount: items.length,
                             itemBuilder: (context, index) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 370,
-                                    height: 200,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(14),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            '${items[index].imgUrl}'),
-                                        fit: BoxFit.fill,
+                              return GestureDetector(
+                                onTap: () {
+                                  // print(items[index].author);
+                                  newsProvider.selectNews(items[index]);
+                                  Navigator.pushNamed(
+                                    context,
+                                    DetailNewsPageView.routeName,
+                                    arguments:
+                                        NewsModels(title: items[index].title),
+                                  );
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 370,
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(14),
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                              '${items[index].imgUrl}'),
+                                          fit: BoxFit.fill,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Container(
-                                    width: 370,
-                                    child: Text(
-                                      "${items[index].title}",
-                                      maxLines: 2,
-                                    ),
-                                  )
-                                ],
+                                    Container(
+                                      width: 370,
+                                      child: Text(
+                                        "${items[index].title}",
+                                        maxLines: 2,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               );
                             },
                           );
