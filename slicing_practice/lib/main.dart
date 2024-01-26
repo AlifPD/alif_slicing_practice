@@ -52,217 +52,237 @@ class HomeViewUI extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(
+                height: 30,
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Today's News",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            DateFormat("EEE, dd MMMM yyyy")
+                                .format(DateTime.now()),
+                            style: const TextStyle(
+                              color: Colors.blueGrey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Stack(
+                      alignment: Alignment.topRight,
                       children: [
-                        const Text(
-                          "Today's News",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage:
+                              NetworkImage('https://picsum.photos/60/60'),
+                        ),
+                        CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.red,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                        "Latest News",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 300,
+                      child: FutureBuilder(
+                        future: API().GetNewsList(),
+                        builder: (context, data) {
+                          if (data.hasError) {
+                            return Center(
+                              child: Text("${data.error}"),
+                            );
+                          } else if (data.hasData) {
+                            var items = data.data as List<NewsModels>;
+                            return ListView.builder(
+                              padding: const EdgeInsets.all(0),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: items.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    newsProvider.selectNews(items[index]);
+                                    Navigator.pushNamed(
+                                        context, DetailNewsPageView.routeName);
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 0),
+                                        width: 370,
+                                        height: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                                '${items[index].imgUrl}'),
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 0),
+                                        width: 370,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "${items[index].title}",
+                                              maxLines: 2,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Text(
+                                              DateFormat("EEE, dd MMMM yyyy")
+                                                  .format(DateTime.now()),
+                                              style: const TextStyle(
+                                                color: Colors.blueGrey,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                child: Column(
+                  children: [
+                    const Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Hot News",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         Text(
-                          DateFormat("EEE, dd MMMM yyyy")
-                              .format(DateTime.now()),
-                          style: const TextStyle(
+                          "View All",
+                          style: TextStyle(
                             color: Colors.blueGrey,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage:
-                            NetworkImage('https://picsum.photos/60/60'),
-                      ),
-                      CircleAvatar(
-                        radius: 10,
-                        backgroundColor: Colors.red,
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              Column(
-                children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: const Text(
-                      "Latest News",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 300,
-                    child: FutureBuilder(
-                      future: API().GetNewsList(),
-                      builder: (context, data) {
-                        if (data.hasError) {
-                          return Center(
-                            child: Text("${data.error}"),
-                          );
-                        } else if (data.hasData) {
-                          var items = data.data as List<NewsModels>;
-                          return ListView.builder(
-                            padding: const EdgeInsets.all(8),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: items.length,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  newsProvider.selectNews(items[index]);
-                                  Navigator.pushNamed(
-                                      context, DetailNewsPageView.routeName);
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 370,
-                                      height: 200,
+                    SizedBox(
+                      height: 550,
+                      child: FutureBuilder(
+                        future: API().GetNewsList(),
+                        builder: (context, data) {
+                          if (data.hasError) {
+                            return Text("${data.error}");
+                          } else if (data.hasData) {
+                            var items = data.data as List<NewsModels>;
+                            return ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: items.length,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    // print(items[index].author);
+                                    newsProvider.selectNews(items[index]);
+                                    Navigator.pushNamed(
+                                      context,
+                                      DetailNewsPageView.routeName,
+                                      arguments:
+                                          NewsModels(title: items[index].title),
+                                    );
+                                  },
+                                  child: ListTile(
+                                    title: Text(
+                                      "${items[index].title}",
+                                      maxLines: 2,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      DateFormat("EEE, dd MMMM yyyy | HH:mm:ss")
+                                          .format(DateTime.parse(
+                                              items[index].publishedTime ??
+                                                  "")),
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        color: Colors.blueGrey,
+                                      ),
+                                    ),
+                                    leading: Container(
+                                      width: 60,
+                                      height: 100,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(14),
                                         image: DecorationImage(
-                                          image: NetworkImage(
-                                              '${items[index].imgUrl}'),
                                           fit: BoxFit.fill,
+                                          image: NetworkImage(
+                                              "${items[index].imgUrl}"),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 370,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${items[index].title}",
-                                            maxLines: 2,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          Text(
-                                            DateFormat("EEE, dd MMMM yyyy")
-                                                .format(DateTime.now()),
-                                            style: const TextStyle(
-                                              color: Colors.blueGrey,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  const Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Hot News",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                                  ),
+                                );
+                              },
+                            );
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        },
                       ),
-                      Text(
-                        "View All",
-                        style: TextStyle(
-                          color: Colors.blueGrey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 550,
-                    child: FutureBuilder(
-                      future: API().GetNewsList(),
-                      builder: (context, data) {
-                        if (data.hasError) {
-                          return Text("${data.error}");
-                        } else if (data.hasData) {
-                          var items = data.data as List<NewsModels>;
-                          return ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: items.length,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  // print(items[index].author);
-                                  newsProvider.selectNews(items[index]);
-                                  Navigator.pushNamed(
-                                    context,
-                                    DetailNewsPageView.routeName,
-                                    arguments:
-                                        NewsModels(title: items[index].title),
-                                  );
-                                },
-                                child: ListTile(
-                                  title: Text(
-                                    "${items[index].title}",
-                                    maxLines: 2,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    DateFormat("EEE, dd MMMM yyyy | HH:mm:ss")
-                                        .format(DateTime.parse(
-                                            items[index].publishedTime ?? "")),
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                      color: Colors.blueGrey,
-                                    ),
-                                  ),
-                                  leading: Container(
-                                    width: 60,
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(14),
-                                      image: DecorationImage(
-                                        fit: BoxFit.fill,
-                                        image: NetworkImage(
-                                            "${items[index].imgUrl}"),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        } else {
-                          return CircularProgressIndicator();
-                        }
-                      },
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ],
           ),
