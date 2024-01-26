@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:slicing_practice/api/news_list_services.dart';
 import 'package:slicing_practice/controller/news_list_provider.dart';
 import 'package:slicing_practice/models/news_model.dart';
@@ -25,8 +25,10 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         title: "Slicing Practice",
         theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-            useMaterial3: true),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+          useMaterial3: true,
+          textTheme: GoogleFonts.robotoTextTheme(),
+        ),
         routes: {
           DetailNewsPageView.routeName: (context) => const DetailNewsPageView(),
         },
@@ -56,9 +58,19 @@ class HomeViewUI extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("Today's News"),
-                        Text(DateFormat("EEE, dd MMMM yyyy")
-                            .format(DateTime.now())),
+                        const Text(
+                          "Today's News",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          DateFormat("EEE, dd MMMM yyyy")
+                              .format(DateTime.now()),
+                          style: const TextStyle(
+                            color: Colors.blueGrey,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -84,6 +96,9 @@ class HomeViewUI extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: const Text(
                       "Latest News",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -104,14 +119,9 @@ class HomeViewUI extends StatelessWidget {
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () {
-                                  // print(items[index].author);
                                   newsProvider.selectNews(items[index]);
                                   Navigator.pushNamed(
-                                    context,
-                                    DetailNewsPageView.routeName,
-                                    arguments:
-                                        NewsModels(title: items[index].title),
-                                  );
+                                      context, DetailNewsPageView.routeName);
                                 },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,11 +139,28 @@ class HomeViewUI extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    Container(
+                                    SizedBox(
                                       width: 370,
-                                      child: Text(
-                                        "${items[index].title}",
-                                        maxLines: 2,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${items[index].title}",
+                                            maxLines: 2,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Text(
+                                            DateFormat("EEE, dd MMMM yyyy")
+                                                .format(DateTime.now()),
+                                            style: const TextStyle(
+                                              color: Colors.blueGrey,
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     )
                                   ],
@@ -156,9 +183,19 @@ class HomeViewUI extends StatelessWidget {
                   const Row(
                     children: [
                       Expanded(
-                        child: Text("Hot News"),
+                        child: Text(
+                          "Hot News",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      Text("View All"),
+                      Text(
+                        "View All",
+                        style: TextStyle(
+                          color: Colors.blueGrey,
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -175,24 +212,44 @@ class HomeViewUI extends StatelessWidget {
                             itemCount: items.length,
                             scrollDirection: Axis.vertical,
                             itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(
-                                  "${items[index].title}",
-                                  maxLines: 2,
-                                ),
-                                subtitle: Text(
-                                  "${items[index].description}",
-                                  maxLines: 2,
-                                ),
-                                leading: Container(
-                                  width: 60,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(14),
-                                    image: DecorationImage(
-                                      fit: BoxFit.fill,
-                                      image: NetworkImage(
-                                          "${items[index].imgUrl}"),
+                              return GestureDetector(
+                                onTap: () {
+                                  // print(items[index].author);
+                                  newsProvider.selectNews(items[index]);
+                                  Navigator.pushNamed(
+                                    context,
+                                    DetailNewsPageView.routeName,
+                                    arguments:
+                                        NewsModels(title: items[index].title),
+                                  );
+                                },
+                                child: ListTile(
+                                  title: Text(
+                                    "${items[index].title}",
+                                    maxLines: 2,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    DateFormat("EEE, dd MMMM yyyy | HH:mm:ss")
+                                        .format(DateTime.parse(
+                                            items[index].publishedTime ?? "")),
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      color: Colors.blueGrey,
+                                    ),
+                                  ),
+                                  leading: Container(
+                                    width: 60,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: NetworkImage(
+                                            "${items[index].imgUrl}"),
+                                      ),
                                     ),
                                   ),
                                 ),
