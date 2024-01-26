@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:slicing_practice/api/news_list_services.dart';
 import 'package:slicing_practice/models/news_model.dart';
 
 class NewsListProvider extends ChangeNotifier {

@@ -55,7 +55,7 @@ class HomeViewUI extends StatelessWidget {
                 height: 30,
               ),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                 child: Row(
                   children: [
                     Expanded(
@@ -74,6 +74,7 @@ class HomeViewUI extends StatelessWidget {
                                 .format(DateTime.now()),
                             style: const TextStyle(
                               color: Colors.blueGrey,
+                              fontSize: 16,
                             ),
                           ),
                         ],
@@ -114,7 +115,7 @@ class HomeViewUI extends StatelessWidget {
                     ),
                     ConstrainedBox(
                       constraints:
-                          const BoxConstraints(minHeight: 220, maxHeight: 300),
+                          const BoxConstraints(minHeight: 220, maxHeight: 320),
                       child: FutureBuilder(
                         future: API().GetNewsList(),
                         builder: (context, data) {
@@ -162,7 +163,7 @@ class HomeViewUI extends StatelessWidget {
                                       ),
                                       Container(
                                         margin: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 0),
+                                            horizontal: 10, vertical: 10),
                                         width: 370,
                                         child: Column(
                                           crossAxisAlignment:
@@ -173,14 +174,20 @@ class HomeViewUI extends StatelessWidget {
                                               maxLines: 2,
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 20,
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             Text(
-                                              DateFormat("EEE, dd MMMM yyyy")
-                                                  .format(DateTime.now()),
+                                              DateFormat(
+                                                      "EEE, dd MMM yyyy | HH:mm:ss")
+                                                  .format(DateTime.parse(
+                                                      items[index]
+                                                              .publishedTime ??
+                                                          "")),
                                               style: const TextStyle(
                                                 color: Colors.blueGrey,
+                                                fontSize: 16,
                                               ),
                                             )
                                           ],
