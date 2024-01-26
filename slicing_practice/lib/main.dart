@@ -44,15 +44,14 @@ class HomeViewUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final newsProvider = Provider.of<NewsListProvider>(context);
-    final selectedNews = newsProvider.newsList;
 
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Container(
@@ -67,6 +66,7 @@ class HomeViewUI extends StatelessWidget {
                             "Today's News",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
+                              fontSize: 20,
                             ),
                           ),
                           Text(
@@ -97,21 +97,24 @@ class HomeViewUI extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                margin: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                 child: Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 6),
                       alignment: Alignment.centerLeft,
                       child: const Text(
                         "Latest News",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          fontSize: 20,
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 300,
+                    ConstrainedBox(
+                      constraints:
+                          const BoxConstraints(minHeight: 220, maxHeight: 300),
                       child: FutureBuilder(
                         future: API().GetNewsList(),
                         builder: (context, data) {
@@ -129,8 +132,13 @@ class HomeViewUI extends StatelessWidget {
                                 return GestureDetector(
                                   onTap: () {
                                     newsProvider.selectNews(items[index]);
-                                    Navigator.pushNamed(
-                                        context, DetailNewsPageView.routeName);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const DetailNewsPageView(),
+                                      ),
+                                    );
                                   },
                                   child: Column(
                                     crossAxisAlignment:
@@ -138,7 +146,7 @@ class HomeViewUI extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Container(
-                                        margin: EdgeInsets.symmetric(
+                                        margin: const EdgeInsets.symmetric(
                                             horizontal: 10, vertical: 0),
                                         width: 370,
                                         height: 200,
@@ -153,7 +161,7 @@ class HomeViewUI extends StatelessWidget {
                                         ),
                                       ),
                                       Container(
-                                        margin: EdgeInsets.symmetric(
+                                        margin: const EdgeInsets.symmetric(
                                             horizontal: 10, vertical: 0),
                                         width: 370,
                                         child: Column(
@@ -195,7 +203,7 @@ class HomeViewUI extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                 child: Column(
                   children: [
                     const Row(
@@ -205,6 +213,7 @@ class HomeViewUI extends StatelessWidget {
                             "Hot News",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
+                              fontSize: 20,
                             ),
                           ),
                         ),
@@ -212,12 +221,14 @@ class HomeViewUI extends StatelessWidget {
                           "View All",
                           style: TextStyle(
                             color: Colors.blueGrey,
+                            fontSize: 20,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 550,
+                    ConstrainedBox(
+                      constraints:
+                          const BoxConstraints(minHeight: 200, maxHeight: 600),
                       child: FutureBuilder(
                         future: API().GetNewsList(),
                         builder: (context, data) {
@@ -226,6 +237,7 @@ class HomeViewUI extends StatelessWidget {
                           } else if (data.hasData) {
                             var items = data.data as List<NewsModels>;
                             return ListView.builder(
+                              shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: items.length,
                               scrollDirection: Axis.vertical,
@@ -276,7 +288,7 @@ class HomeViewUI extends StatelessWidget {
                               },
                             );
                           } else {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           }
                         },
                       ),
