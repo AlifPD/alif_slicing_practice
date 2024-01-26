@@ -13,7 +13,7 @@ class DetailNewsPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("News"),
+        title: const Text("News"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -25,7 +25,7 @@ class DetailNewsPageView extends StatelessWidget {
                   children: [
                     Container(
                       height: 250,
-                      padding: EdgeInsets.all(0),
+                      padding: const EdgeInsets.all(0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                       ),
